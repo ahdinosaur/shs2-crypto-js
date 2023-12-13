@@ -56,7 +56,7 @@ module.exports.verifyMsg2 = (state, msg) => {
   const hmac = msg.slice(32, 64);
 
   const shared_secret_ab = crypto_scalarmult(state.client_ephemeral_sk, server_ephemeral_pk);
-  const auth_key = crypto_hash_sha256(Buffer.concat(state.network_identifier, shared_secret_ab));
+  const auth_key = crypto_hash_sha256(Buffer.concat([state.network_identifier, shared_secret_ab]));
 
   if (crypto_auth_verify(hmac, server_ephemeral_pk, auth_key) !== 0) {
     return false;
@@ -86,11 +86,11 @@ module.exports.verifyMsg2 = (state, msg) => {
 //   - `msg3_plaintext`: Buffer<96 bytes> // crypto_sign_BYTES + crypto_sign_PUBLICKEYBYTES
 module.exports.createMsg3 = state => {
   const handshake_id = crypto_hash_sha256(
-    Buffer.concat(
+    Buffer.concat([
       state.shared_secret_ab,
       state.client_ephemeral_pk,
       state.server_ephemeral_pk
-    )
+    ])
   );
 
   const shared_secret_aB = crypto_scalarmult(
@@ -204,7 +204,7 @@ module.exports.clientOutcome = state => {
 
   // Same as `hmac` in `verifyMsg2()`.
   const server_hmac = crypto_auth(state.server_ephemeral_pk, state.network_identifier);
-  const encryption_nonce = server_hmac.slice(0, 24);
+  const encryption_nonce = server_hmac.slice(0, 12);
 
   const decryption_key = crypto_hash_sha256(Buffer.concat([
     state.msg4_secretbox_key_hash,
@@ -213,7 +213,7 @@ module.exports.clientOutcome = state => {
 
   // Same as `hmac` in `createMsg1()`.
   const client_hmac = crypto_auth(state.client_ephemeral_pk, state.network_identifier);
-  const decryption_nonce = client_hmac.slice(0, 24);
+  const decryption_nonce = client_hmac.slice(0, 12);
 
   return {
     encryption_key,
