@@ -24,8 +24,8 @@ const {
  *   - `server_longterm_pk`: crypto_sign_PUBLICKEYBYTES
  */
 
-// At some points, the protocol needs 24 zero bytes in place of a nonce.
-const zeros = Buffer.alloc(24);
+// At some points, the protocol needs 12 zero bytes in place of a nonce.
+const zeros = Buffer.alloc(12);
 zeros.fill(0);
 
 // Returns a Buffer<64 bytes> containing a valid msg1.
@@ -193,9 +193,9 @@ module.exports.verifyMsg4 = (state, msg) => {
 //
 // The returned outcome object has the fields
 //   - `encryption_key`: Buffer<32 bytes> // crypto_hash_sha256_BYTES
-//   - `encryption_nonce`: Buffer<24 bytes> // crypto_box_NONCEBYTES
+//   - `encryption_nonce`: Buffer<12 bytes> // crypto_box_NONCEBYTES
 //   - `decryption_key`: Buffer<32 bytes> // crypto_hash_sha256_BYTES
-//   - `decryption_nonce`: Buffer<24 bytes> // crypto_box_NONCEBYTES
+//   - `decryption_nonce`: Buffer<12 bytes> // crypto_box_NONCEBYTES
 module.exports.clientOutcome = state => {
   const encryption_key = crypto_hash_sha256(Buffer.concat([
     state.msg4_secretbox_key_hash,

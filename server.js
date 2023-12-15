@@ -23,8 +23,8 @@ const {
  *   - `server_ephemeral_pk`: crypto_scalarmult_curve25519_BYTES (the result of crypto_sign_ed25519_pk_to_curve25519 on crypto_sign_PUBLICKEYBYTES)
  */
 
-// At some points, the protocol needs 24 zero bytes in place of a nonce.
-const zeros = Buffer.alloc(24);
+// At some points, the protocol needs 12 zero bytes in place of a nonce.
+const zeros = Buffer.alloc(12);
 zeros.fill(0);
 
 // Returns true iff `msg: Buffer<64 bytes>` is a valid msg1 for the given state.
@@ -190,9 +190,9 @@ module.exports.createMsg4 = state => {
 //
 // The returned outcome object has the fields
 //   - `encryption_key`: Buffer<32 bytes> // crypto_hash_sha256_BYTES
-//   - `encryption_nonce`: Buffer<24 bytes> // crypto_box_NONCEBYTES
+//   - `encryption_nonce`: Buffer<12 bytes> // crypto_box_NONCEBYTES
 //   - `decryption_key`: Buffer<32 bytes> // crypto_hash_sha256_BYTES
-//   - `decryption_nonce`: Buffer<24 bytes> // crypto_box_NONCEBYTES
+//   - `decryption_nonce`: Buffer<12 bytes> // crypto_box_NONCEBYTES
 module.exports.serverOutcome = state => {
   const msg4_secretbox_key_hash = crypto_hash_sha256(state.msg4_secretbox_key);
 
